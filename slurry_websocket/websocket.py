@@ -47,7 +47,7 @@ class Websocket(Section):
         client-side timeout (ConnectionTimeout, DisconnectionTimeout),
         or server rejection (ConnectionRejected) during handshakes.
     """
-    def __init__(self, url, ssl_context=None, *, use_ssl, subprotocols=None,
+    def __init__(self, url, ssl_context=None, *, subprotocols=None,
         extra_headers=None,
         message_queue_size=MESSAGE_QUEUE_SIZE, max_message_size=MAX_MESSAGE_SIZE,
         connect_timeout=CONN_TIMEOUT, disconnect_timeout=CONN_TIMEOUT,
@@ -58,7 +58,7 @@ class Websocket(Section):
         self.host = None
         self.port = None
         self.resource = None
-        self.use_ssl = use_ssl
+        self.use_ssl = None
         self.subprotocols = subprotocols
         self.extra_headers = extra_headers
         self.message_queue_size = message_queue_size

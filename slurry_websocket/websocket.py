@@ -21,10 +21,6 @@ class Websocket(Section):
     :param ssl_context: Optional SSL context used for ``wss:`` URLs. A default
         SSL context is used for ``wss:`` if this argument is ``None``.
     :type ssl_context: ssl.SSLContext or None
-    :param use_ssl: If this is an SSL context, then use that context. If this is
-        ``True`` then use default SSL context. If this is ``False`` then disable
-        SSL.
-    :type use_ssl: bool or ssl.SSLContext
     :param subprotocols: An iterable of strings representing preferred
         subprotocols.
     :param list[tuple[bytes,bytes]] extra_headers: A list of 2-tuples containing
@@ -73,7 +69,7 @@ class Websocket(Section):
         message_queue_size=MESSAGE_QUEUE_SIZE, max_message_size=MAX_MESSAGE_SIZE,
         connect_timeout=CONN_TIMEOUT, disconnect_timeout=CONN_TIMEOUT,
         parse_json=True):
-        """Create a WebSocket client connection to a host.
+        """Alternative client factory which creates a WebSocket client connection to a host/port.
 
         The websocket will connect when the pipeline is started.
 
@@ -106,7 +102,7 @@ class Websocket(Section):
             client-side timeout (ConnectionTimeout, DisconnectionTimeout),
             or server rejection (ConnectionRejected) during handshakes.
         """
-        websocket = cls(None, None, use_ssl=use_ssl, subprotocols=subprotocols,
+        websocket = cls(None, None, subprotocols=subprotocols,
             extra_headers=extra_headers,
             message_queue_size=message_queue_size, max_message_size=max_message_size,
             connect_timeout=connect_timeout, disconnect_timeout=disconnect_timeout,
@@ -114,6 +110,7 @@ class Websocket(Section):
         websocket.host = host
         websocket.port = port
         websocket.resource = resource
+        websocket.use_ssl = use_ssl
 
         return websocket
 

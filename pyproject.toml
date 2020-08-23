@@ -1,11 +1,26 @@
 [tool.poetry]
 name = "slurry-websocket"
 version = "0.1.0"
-description = ""
+description = "A Slurry websocket section"
 authors = ["Anders Ellenshøj Andersen <andersa@ellenshoej.dk>"]
+license = "MIT"
+homepage = "https://github.com/andersea/slurry-websocket"
+readme = "README.rst"
+keywords = ["async", "websocket", "slurry", "trio"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Framework :: Trio",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.6"
 slurry = "^0.3.1"
 trio-websocket = "^0.8.0"
 ujson = "^3.1.0"

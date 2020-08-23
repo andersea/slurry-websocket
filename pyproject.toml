@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "slurry-websocket"
-version = "0.1.3"
+version = "0.1.4"
 description = "A Websocket client section for the Slurry stream processing microframework"
 authors = ["Anders Ellenshøj Andersen <andersa@ellenshoej.dk>"]
 license = "MIT"

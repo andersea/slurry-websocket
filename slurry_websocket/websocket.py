@@ -1,5 +1,6 @@
 """Slurry websocket client."""
 
+from async_generator import aclosing
 from slurry import Section
 import trio
 from trio_websocket import open_websocket, open_websocket_url
@@ -119,36 +120,37 @@ class Websocket(Section):
 
 
     async def pump(self, input, output):
-        async def send_task():
-            send_message = self.ws.send_message
-            receive = input.receive
-            while True:
-                await send_message(await receive())
+        async def send_task(ws):
+            send_message = ws.send_message
+            async with aclosing(input) as aiter:
+                async for message in aiter:
+                    await send_message(message)
 
-        async def send_json_task():
-            send_message = self.ws.send_message
-            receive = input.receive
-            while True:
-                await send_message(ujson.dumps(await receive()))
+        async def send_json_task(ws):
+            send_message = ws.send_message
+            async with aclosing(input) as aiter:
+                async for item in aiter:
+                    await send_message(ujson.dumps(item))
 
-        async def receive_task():
-            receive_message = self.ws.receive_message
+        async def receive_task(ws):
+            get_message = ws.get_message
             send = output.send
             while True:
-                await send(await receive_message())
+                await send(await get_message())
 
-        async def receive_json_task():
-            receive_message = self.ws.receive_message
+        async def receive_json_task(ws):
+            get_message = ws.get_message
             send = output.send
             while True:
-                await send(ujson.loads(await receive_message()))
+                await send(ujson.loads(await get_message()))
 
-        async with self.ws, trio.open_nursery() as nursery:
-            if self.dumps:
-                nursery.start_soon(send_json_task)
-            else:
-                nursery.start_soon(send_task)
+        async with self.ws as ws, trio.open_nursery() as nursery:
+            if input is not None:
+                if self.dumps:
+                    nursery.start_soon(send_json_task, ws)
+                else:
+                    nursery.start_soon(send_task, ws)
             if self.loads:
-                nursery.start_soon(receive_json_task)
+                nursery.start_soon(receive_json_task, ws)
             else:
-                nursery.start_soon(receive_task)
+                nursery.start_soon(receive_task, ws)

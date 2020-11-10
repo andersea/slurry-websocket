@@ -23,7 +23,7 @@ classifiers = [
 python = "^3.6"
 slurry = "^0.4"
 trio-websocket = "^0.8.0"
-ujson = "^3.1.0"
+ujson = "^4.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

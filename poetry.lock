@@ -313,10 +313,10 @@ description = "An async stream processing microframework"
 name = "slurry"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "0.4.0"
+version = "0.5.0"
 
 [package.dependencies]
-trio = ">=0.16.0,<0.17.0"
+trio = ">=0.17.0,<0.18.0"
 
 [[package]]
 category = "main"
@@ -353,7 +353,7 @@ description = "A friendly Python library for async concurrency and I/O"
 name = "trio"
 optional = false
 python-versions = ">=3.6"
-version = "0.16.0"
+version = "0.17.0"
 
 [package.dependencies]
 async-generator = ">=1.9"
@@ -476,7 +476,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "0d56627b5fb2085f53efea0f1774a26df908e347245827c0564f38b1cc50ee10"
+content-hash = "c80893429fdf872d3ff9b1836f49da5358b6eb43fc8250fdc2d43b31769f1b8f"
 lock-version = "1.0"
 python-versions = "^3.6"
 
@@ -663,8 +663,8 @@ six = [
     {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
 ]
 slurry = [
-    {file = "Slurry-0.4.0-py3-none-any.whl", hash = "sha256:b57259f26d3d0596a616b009793357e26a18851e682fee974715b50c96f61951"},
-    {file = "Slurry-0.4.0.tar.gz", hash = "sha256:35989ed07df46c45bcf4be95c786958f9aabfe415d1a527203e907f83c18a192"},
+    {file = "Slurry-0.5.0-py3-none-any.whl", hash = "sha256:6937f12862460a16d06371fbed803da8118458715b4c8f707f253c438d9ec97a"},
+    {file = "Slurry-0.5.0.tar.gz", hash = "sha256:dea4eb13f1306fb359c59680d36ea161ec22b05912bbf2c613a1e9380432289d"},
 ]
 sniffio = [
     {file = "sniffio-1.1.0-py3-none-any.whl", hash = "sha256:20ed6d5b46f8ae136d00b9dcb807615d83ed82ceea6b2058cecb696765246da5"},
@@ -679,8 +679,8 @@ toml = [
     {file = "toml-0.10.1.tar.gz", hash = "sha256:926b612be1e5ce0634a2ca03470f95169cf16f939018233a670519cb4ac58b0f"},
 ]
 trio = [
-    {file = "trio-0.16.0-py3-none-any.whl", hash = "sha256:451ddb27b4e5215e00646fcbb8028d341fccf284e053dc376506a14bb133dbcf"},
-    {file = "trio-0.16.0.tar.gz", hash = "sha256:df067dd0560c321af39d412cd81fc3a7d13f55af9150527daab980683e9fcf3c"},
+    {file = "trio-0.17.0-py3-none-any.whl", hash = "sha256:fc70c74e8736d1105b3c05cc2e49b30c58755733740f9c51ae6d88a4d6d0a291"},
+    {file = "trio-0.17.0.tar.gz", hash = "sha256:e85cf9858e445465dfbb0e3fdf36efe92082d2df87bfe9d62585eedd6e8e9d7d"},
 ]
 trio-websocket = [
     {file = "trio-websocket-0.8.0.tar.gz", hash = "sha256:2f6c1f2ac87640e7b4539db723d336873149057caec4aac3b56af02de4cd47f0"},

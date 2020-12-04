@@ -1,5 +1,9 @@
 # History
 
+## v0.1.7
+
+Update dependencies
+
 ## v0.1.6
 
 Bump slurry version

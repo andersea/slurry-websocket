@@ -1,5 +1,5 @@
 """Websocket client section for the Slurry stream processing microframework."""
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 
 from trio_websocket import ConnectionClosed, ConnectionTimeout, HandshakeError, DisconnectionTimeout
 

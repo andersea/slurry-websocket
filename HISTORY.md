@@ -1,5 +1,9 @@
 # History
 
+## v0.1.8
+
+Update to Slurry 0.6.0.
+
 ## v0.1.7
 
 Update dependencies

@@ -126,7 +126,7 @@ class Websocket(Section):
         async def send_json_task():
             send_message = self._connection.send_message
             async for item in input:
-                await send_message(orjson.dumps(item))
+                await send_message(orjson.dumps(item).decode())
 
         async def receive_task():
             get_message = self._connection.get_message

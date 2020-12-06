@@ -1,13 +1,16 @@
+import orjson
 import pytest
 import trio
 from trio_websocket import serve_websocket, ConnectionClosed, open_websocket, connect_websocket
+import timeit
 
 from slurry import Pipeline
 from slurry_websocket import Websocket
 
+
 @pytest.fixture
-def echo_server():
-    async def _echo_server(request):
+async def echo_server():
+    async def handler(request):
         ws = await request.accept()
         while True:
             try:
@@ -15,7 +18,17 @@ def echo_server():
                 await ws.send_message(message)
             except ConnectionClosed:
                 break
-    return _echo_server
+    async with trio.open_nursery() as nursery:
+        nursery.start_soon(serve_websocket, handler, '127.0.0.1', 49000, None)
+        yield ('127.0.0.1', 49000)
+        nursery.cancel_scope.cancel()
+
+@pytest.fixture
+def hello_world():
+    return {
+        'message': 'hello, world',
+        'number': 42
+    }
 
 def test_websocket_init():
     assert isinstance(Websocket('wss://dummy'), Websocket)
@@ -23,20 +36,25 @@ def test_websocket_init():
 async def test_websocket_create():
     assert isinstance(Websocket.create('127.0.0.1', 49000, '', use_ssl=False), Websocket)
 
-async def test_echo(echo_server):
-    hello_world = {
-        'message': 'hello, world'
-    }
-    async with trio.open_nursery() as nursery:
-        nursery.start_soon(serve_websocket, echo_server, '127.0.0.1', 49000, None)
+async def test_json(echo_server, hello_world):
+    send_channel, receive_channel = trio.open_memory_channel(1)
+    async with Pipeline.create(
+        receive_channel,
+        Websocket.create('127.0.0.1', 49000, '/', use_ssl=False, parse_json=True) 
+    ) as pipeline, pipeline.tap() as tap:
+        await send_channel.send(hello_world)
+        response = await tap.receive()
+        assert 'message' in response
+        assert response['message'] == 'hello, world'
 
-        send_channel, receive_channel = trio.open_memory_channel(1)
-        async with Pipeline.create(
-            receive_channel,
-            Websocket.create('127.0.0.1', 49000, '/', use_ssl=False, parse_json=True) 
-        ) as pipeline, pipeline.tap() as tap:
-            await send_channel.send(hello_world)
-            response = await tap.receive()
-            assert 'message' in response
-            assert response['message'] == 'hello, world'
-        nursery.cancel_scope.cancel()
+async def test_binary(echo_server, hello_world):
+    send_channel, receive_channel = trio.open_memory_channel(1)
+    async with Pipeline.create(
+        receive_channel,
+        Websocket.create('127.0.0.1', 49000, '/', use_ssl=False, parse_json=False) 
+    ) as pipeline, pipeline.tap() as tap:
+        message = orjson.dumps(hello_world)
+        await send_channel.send(message)
+        response = await tap.receive()
+        assert isinstance(response, bytes)
+        assert response == message

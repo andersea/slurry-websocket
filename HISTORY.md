@@ -1,5 +1,9 @@
 # History
 
+## v0.2.1
+
+* Decode orjson bytes-serialization to str before sending. Still twice as fast as ujson.
+
 ## v0.2.0
 
 * Upgrade to trio-websocket 0.9.0

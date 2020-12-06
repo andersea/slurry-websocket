@@ -1,11 +1,11 @@
 """Slurry websocket client."""
 
-from async_generator import aclosing
 from slurry import Section
 import trio
 from trio_websocket import connect_websocket, connect_websocket_url
 from trio_websocket import ConnectionTimeout, HandshakeError, DisconnectionTimeout
-import ujson
+import orjson
+from wsproto.frame_protocol import CloseReason
 
 CONN_TIMEOUT = 60 # default connect & disconnect timeout, in seconds
 MESSAGE_QUEUE_SIZE = 1
@@ -16,6 +16,8 @@ class Websocket(Section):
     """Create a WebSocket client connection to a URL.
 
     The websocket will connect when the pipeline is started.
+
+    For more information, see the `trio-websocket documentation <https://trio-websocket.readthedocs.io/en/stable/api.html#connections`_.
 
     :param str url: A WebSocket URL, i.e. `ws:` or `wss:` URL scheme.
     :param ssl_context: Optional SSL context used for ``wss:`` URLs. A default
@@ -36,8 +38,7 @@ class Websocket(Section):
         connection before timing out.
     :param float disconnect_timeout: The number of seconds to wait when closing
         the connection before timing out.
-    :param bool dumps: Unpack json output.
-    :param bool loads: Pack json input.
+    :param bool parse_json: Serialise/deserialise websocket input and output automatically.
 
     :raises HandshakeError: for any networking error,
         client-side timeout (ConnectionTimeout, DisconnectionTimeout),
@@ -62,6 +63,7 @@ class Websocket(Section):
         self.connect_timeout = connect_timeout
         self.disconnect_timeout = disconnect_timeout
         self.parse_json = parse_json
+        self._connection = None
 
     @classmethod
     def create(cls, host, port, resource, *, use_ssl, subprotocols=None,
@@ -72,6 +74,8 @@ class Websocket(Section):
         """Alternative client factory which creates a WebSocket client connection to a host/port.
 
         The websocket will connect when the pipeline is started.
+
+        For more information, see the `trio-websocket documentation <https://trio-websocket.readthedocs.io/en/stable/api.html#connections`_.
 
         :param str host: The host to connect to.
         :param int port: The port to connect to.
@@ -95,8 +99,7 @@ class Websocket(Section):
             connection before timing out.
         :param float disconnect_timeout: The number of seconds to wait when closing
             the connection before timing out.
-        :param bool dumps: Unpack json output.
-        :param bool loads: Pack json input.
+        :param bool parse_json: Serialise/deserialise websocket input and output automatically.
 
         :raises HandshakeError: for any networking error,
             client-side timeout (ConnectionTimeout, DisconnectionTimeout),
@@ -115,42 +118,40 @@ class Websocket(Section):
         return websocket
 
     async def pump(self, input, output):
-        async def send_task(connection):
-            send_message = connection.send_message
-            async with aclosing(input) as aiter:
-                async for message in aiter:
-                    await send_message(message)
+        async def send_task():
+            send_message = self._connection.send_message
+            async for message in input:
+                await send_message(message)
 
-        async def send_json_task(connection):
-            send_message = connection.send_message
-            async with aclosing(input) as aiter:
-                async for item in aiter:
-                    await send_message(ujson.dumps(item))
+        async def send_json_task():
+            send_message = self._connection.send_message
+            async for item in input:
+                await send_message(orjson.dumps(item))
 
-        async def receive_task(connection):
-            get_message = connection.get_message
+        async def receive_task():
+            get_message = self._connection.get_message
             send = output.send
             while True:
                 await send(await get_message())
 
-        async def receive_json_task(connection):
-            get_message = connection.get_message
+        async def receive_json_task():
+            get_message = self._connection.get_message
             send = output.send
             while True:
-                await send(ujson.loads(await get_message()))
+                await send(orjson.loads(await get_message()))
 
         async with trio.open_nursery() as nursery:
             try:
                 with trio.fail_after(self.connect_timeout):
                     if self.url:
-                        connection = await connect_websocket_url(nursery,
+                        self._connection = await connect_websocket_url(nursery,
                             self.url, self.ssl_context,
                             subprotocols=self.subprotocols,
                             extra_headers=self.extra_headers,
                             message_queue_size=self.message_queue_size,
                             max_message_size=self.max_message_size)
                     else:
-                        connection = await connect_websocket(nursery, self.host, self.port,
+                        self._connection = await connect_websocket(nursery, self.host, self.port,
                             self.resource, use_ssl=self.use_ssl, subprotocols=self.subprotocols,
                             extra_headers=self.extra_headers,
                             message_queue_size=self.message_queue_size,
@@ -162,16 +163,64 @@ class Websocket(Section):
             try:
                 if input is not None:
                     if self.parse_json:
-                        nursery.start_soon(send_json_task, connection)
+                        nursery.start_soon(send_json_task)
                     else:
-                        nursery.start_soon(send_task, connection)
+                        nursery.start_soon(send_task)
                 if self.parse_json:
-                    await receive_json_task(connection)
+                    await receive_json_task()
                 else:
-                    await receive_task(connection)
+                    await receive_task()
             finally:
                 try:
                     with trio.fail_after(self.disconnect_timeout):
-                        await connection.aclose()
+                        await self._connection.aclose()
                 except trio.TooSlowError:
                     raise DisconnectionTimeout from None
+
+    @property
+    def closed(self) -> CloseReason:
+        '''
+        (Read-only) The reason why the connection was closed, or ``None`` if the
+        connection is still open.
+
+        :rtype: CloseReason
+        '''
+        if self._connection:
+            return self._connection.closed
+        raise ConnectionError('Websocket not started.')
+
+    async def aclose(self, code=1000, reason=None):
+        '''
+        Close the WebSocket connection.
+        '''
+        if self._connection:
+            return await self._connection.aclose(code, reason)
+        raise ConnectionError('Websocket not started.')
+
+    async def ping(self, payload=None):
+        '''
+        Send WebSocket ping to remote endpoint and wait for a correspoding pong.
+        '''
+        if self._connection:
+            return await self._connection.ping(payload)
+        raise ConnectionError('Websocket not started.')
+
+    async def pong(self, payload=None):
+        '''
+        Send an unsolicted pong.
+        '''
+        if self._connection:
+            return await self._connection.pong(payload)
+        raise ConnectionError('Websocket not started.')
+
+    async def send_message(self, message):
+        '''
+        Send a WebSocket message directly to the underlying websocket. (Normally, messages
+        should be sent via the section input channel.)
+
+        The corresponding ``WebSocketConnection``.``get_message`` call is not supported. Any
+        returned messages are sent on the output channel.
+        '''
+        if self._connection:
+            return await self._connection.send_message(message)
+        raise ConnectionError('Websocket not started.')

@@ -366,7 +366,7 @@ description = "WebSocket library for Trio"
 name = "trio-websocket"
 optional = false
 python-versions = ">=3.5"
-version = "0.9.0"
+version = "0.9.1"
 
 [package.dependencies]
 async-generator = ">=1.10"
@@ -415,7 +415,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-cov", "jaraco.test (>=3.2.0)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
 
 [metadata]
-content-hash = "be0838119f48a758c494157df957b7611ee1442d34ed85bf2cd50b8bb734f0c0"
+content-hash = "3f13a3d8c13c14eeb13f5d2fd91bf25458a51d834602ceca21e058abb8a0ad83"
 lock-version = "1.0"
 python-versions = "^3.6"
 
@@ -623,8 +623,8 @@ trio = [
     {file = "trio-0.17.0.tar.gz", hash = "sha256:e85cf9858e445465dfbb0e3fdf36efe92082d2df87bfe9d62585eedd6e8e9d7d"},
 ]
 trio-websocket = [
-    {file = "trio-websocket-0.9.0.tar.gz", hash = "sha256:02e8c3a12134d0a07527b50db7bd8d5d70604c14c65fb21da2f519f8de62087e"},
-    {file = "trio_websocket-0.9.0-py3-none-any.whl", hash = "sha256:0c82515fd7dbef5e9f115fae24b2e690902ee7e8cd7d58cdbba1670758b048fb"},
+    {file = "trio-websocket-0.9.1.tar.gz", hash = "sha256:2082bdaca326d5f1106be60cb39504c515880132a50760e14af843da809d5c17"},
+    {file = "trio_websocket-0.9.1-py3-none-any.whl", hash = "sha256:6a1e152dcaa73264d398328ff474f3cfcfc7660c02b826b03012414014e9170b"},
 ]
 typed-ast = [
     {file = "typed_ast-1.4.1-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:73d785a950fc82dd2a25897d525d003f6378d1cb23ab305578394694202a58c3"},

@@ -1,5 +1,9 @@
 # History
 
+## v0.2.2
+
+Update to Slurry 0.8.0
+
 ## v0.2.1
 
 * Decode orjson bytes-serialization to str before sending. Still twice as fast as ujson.

@@ -2,7 +2,7 @@
 
 ## v0.2.3
 
-Update to Slurry 0.8.0
+* Update to Slurry 0.8.0.
 
 ## v0.2.1
 

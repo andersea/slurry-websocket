@@ -1,6 +1,6 @@
 """Slurry websocket client."""
 
-from slurry import Section
+from slurry.sections.abc import Section
 import trio
 from trio_websocket import connect_websocket, connect_websocket_url
 from trio_websocket import ConnectionTimeout, HandshakeError, DisconnectionTimeout

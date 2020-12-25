@@ -130,15 +130,13 @@ class Websocket(Section):
 
         async def receive_task():
             get_message = self._connection.get_message
-            send = output.send
             while True:
-                await send(await get_message())
+                await output(await get_message())
 
         async def receive_json_task():
             get_message = self._connection.get_message
-            send = output.send
             while True:
-                await send(orjson.loads(await get_message()))
+                await output(orjson.loads(await get_message()))
 
         async with trio.open_nursery() as nursery:
             try:

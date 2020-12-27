@@ -1,5 +1,9 @@
 # History
 
+## v0.2.5
+
+* Update to Slurry 0.10.1.
+
 ## v0.2.4
 
 * Update to Slurry 0.9.0. Fix api changes.

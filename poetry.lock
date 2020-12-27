@@ -304,7 +304,7 @@ description = "An async stream processing microframework"
 name = "slurry"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "0.9.0"
+version = "0.10.1"
 
 [package.dependencies]
 trio = ">=0.17.0,<0.18.0"
@@ -414,7 +414,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-cov", "jaraco.test (>=3.2.0)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
 
 [metadata]
-content-hash = "a1979c7a11aad92bdc065e06bd974f267e4f924439814c241272441dd4257852"
+content-hash = "2e69bfeb5d9f1b7cb11064ba6a6f505c20ca6bbd1b51dac167305752963b17a3"
 lock-version = "1.0"
 python-versions = "^3.6"
 
@@ -602,8 +602,8 @@ six = [
     {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
 ]
 slurry = [
-    {file = "Slurry-0.9.0-py3-none-any.whl", hash = "sha256:b10e73f05a1b75c1a6aca647114d90199fca7251acb0b87663ae0f703835c7e1"},
-    {file = "Slurry-0.9.0.tar.gz", hash = "sha256:ac083d5035ac8770d799c92fd8f0b72374ee7e2d6838330065bf2286006f9458"},
+    {file = "Slurry-0.10.1-py3-none-any.whl", hash = "sha256:b55bdd66f371ed47d5139c9b95a9315a6b9dd27201075e80f22c412ddfbd4cc3"},
+    {file = "Slurry-0.10.1.tar.gz", hash = "sha256:e984fd2b53ee3b068f9de8f320245b30288800189379522e8dc7731d7e8efb1e"},
 ]
 sniffio = [
     {file = "sniffio-1.2.0-py3-none-any.whl", hash = "sha256:471b71698eac1c2112a40ce2752bb2f4a4814c22a54a3eed3676bc0f5ca9f663"},

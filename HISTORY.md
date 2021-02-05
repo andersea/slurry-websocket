@@ -1,5 +1,9 @@
 # History
 
+## v0.2.6
+
+* Add log messages to keep an eye on websocket status.
+
 ## v0.2.5
 
 * Update to Slurry 0.10.1.

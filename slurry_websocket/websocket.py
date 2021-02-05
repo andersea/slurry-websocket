@@ -1,4 +1,5 @@
 """Slurry websocket client."""
+import logging
 
 from slurry.sections.abc import Section
 import trio
@@ -6,6 +7,8 @@ from trio_websocket import connect_websocket, connect_websocket_url
 from trio_websocket import ConnectionTimeout, HandshakeError, DisconnectionTimeout
 import orjson
 from wsproto.frame_protocol import CloseReason
+
+log = logging.getLogger(__name__)
 
 CONN_TIMEOUT = 60 # default connect & disconnect timeout, in seconds
 MESSAGE_QUEUE_SIZE = 1
@@ -118,6 +121,7 @@ class Websocket(Section):
         return websocket
 
     async def pump(self, input, output):
+        log.info('Slurry websocket starting.')
         async def send_task():
             send_message = self._connection.send_message
             async for message in input:
@@ -159,6 +163,7 @@ class Websocket(Section):
             except OSError as e:
                 raise HandshakeError from e
             try:
+                log.info('Slurry websocket connected.')
                 if input is not None:
                     if self.parse_json:
                         nursery.start_soon(send_json_task)
@@ -169,11 +174,14 @@ class Websocket(Section):
                 else:
                     await receive_task()
             finally:
+                log.info('Slurry websocket stopping.')
                 try:
                     with trio.fail_after(self.disconnect_timeout):
                         await self._connection.aclose()
                 except trio.TooSlowError:
                     raise DisconnectionTimeout from None
+                finally:
+                    log.info('Slurry websocket closed.')
 
     @property
     def closed(self) -> CloseReason:

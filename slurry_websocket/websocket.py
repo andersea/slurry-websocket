@@ -189,11 +189,15 @@ class Websocket(Section):
         (Read-only) The reason why the connection was closed, or ``None`` if the
         connection is still open.
 
+        .. note::
+            The websocket is not actually initialized, until the enclosing pipeline is started.
+            Before this time, the closed property will always return None.
+
         :rtype: CloseReason
         '''
-        if self._connection:
-            return self._connection.closed
-        raise ConnectionError('Websocket not started.')
+        if self._connection is None:
+            return None
+        return self._connection.closed
 
     async def aclose(self, code=1000, reason=None):
         '''

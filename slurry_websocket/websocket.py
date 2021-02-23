@@ -4,7 +4,7 @@ import logging
 from slurry.sections.abc import Section
 import trio
 from trio_websocket import connect_websocket, connect_websocket_url
-from trio_websocket import ConnectionTimeout, HandshakeError, DisconnectionTimeout
+from trio_websocket import ConnectionTimeout, DisconnectionTimeout, HandshakeError, ConnectionClosed
 import orjson
 from wsproto.frame_protocol import CloseReason
 
@@ -132,16 +132,6 @@ class Websocket(Section):
             async for item in input:
                 await send_message(orjson.dumps(item).decode())
 
-        async def receive_task():
-            get_message = self._connection.get_message
-            while True:
-                await output(await get_message())
-
-        async def receive_json_task():
-            get_message = self._connection.get_message
-            while True:
-                await output(orjson.loads(await get_message()))
-
         async with trio.open_nursery() as nursery:
             try:
                 with trio.fail_after(self.connect_timeout):
@@ -162,19 +152,26 @@ class Websocket(Section):
                 raise ConnectionTimeout from None
             except OSError as e:
                 raise HandshakeError from e
-            try:
-                log.info('Slurry websocket connected.')
-                if input is not None:
-                    if self.parse_json:
-                        nursery.start_soon(send_json_task)
-                    else:
-                        nursery.start_soon(send_task)
+            log.info('Slurry websocket connected.')
+            if input is not None:
                 if self.parse_json:
-                    await receive_json_task()
+                    nursery.start_soon(send_json_task)
                 else:
-                    await receive_task()
+                    nursery.start_soon(send_task)
+            try:
+                while True:
+                    message = await self._connection.get_message()
+                    if self.parse_json:
+                        await output(orjson.loads(message))
+                    else:
+                        await output(message)
+            except ConnectionClosed:
+                log.info('Slurry websocket read from closed connection.')
+            except trio.BrokenResourceError:
+                log.info('Slurry websocket write to closed pipeline.')
             finally:
                 log.info('Slurry websocket stopping.')
+                nursery.cancel_scope.cancel()
                 try:
                     with trio.fail_after(self.disconnect_timeout):
                         await self._connection.aclose()

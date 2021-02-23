@@ -1,5 +1,9 @@
 # History
 
+## v0.2.7
+
+* Try to handle various websocket closure scenarios more cleanly, instead of throwing errors to the client.
+
 ## v0.2.6
 
 * Add log messages to keep an eye on websocket status.

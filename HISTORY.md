@@ -1,5 +1,9 @@
 # History
 
+## v0.2.8
+
+* Incorrect CloseReason import. This is purely used in type hinting and has no functional impact.
+
 ## v0.2.7
 
 * Try to handle various websocket closure scenarios more cleanly, instead of throwing errors to the client.

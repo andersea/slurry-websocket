@@ -1,8 +1,9 @@
 # History
 
-## v0.2.9
+## v0.2.10
 
 * Simplify connection closure cleanup. Dead code removal and simpler logging.
+* Update dependencies.
 
 ## v0.2.8
 

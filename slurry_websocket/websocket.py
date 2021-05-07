@@ -164,20 +164,10 @@ class Websocket(Section):
                         await output(orjson.loads(message))
                     else:
                         await output(message)
-            except ConnectionClosed:
-                log.info('Slurry websocket read from closed connection.')
-            except trio.BrokenResourceError:
-                log.info('Slurry websocket write to closed pipeline.')
+            except ConnectionClosed as cc:
+                log.info('Slurry websocket connection closed, %s', cc.reason)
             finally:
-                log.info('Slurry websocket stopping.')
                 nursery.cancel_scope.cancel()
-                try:
-                    with trio.fail_after(self.disconnect_timeout):
-                        await self._connection.aclose()
-                except trio.TooSlowError:
-                    raise DisconnectionTimeout from None
-                finally:
-                    log.info('Slurry websocket closed.')
 
     @property
     def closed(self) -> CloseReason:

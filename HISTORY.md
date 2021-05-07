@@ -1,5 +1,9 @@
 # History
 
+## v0.2.9
+
+* Simplify connection closure cleanup. Dead code removal and simpler logging.
+
 ## v0.2.8
 
 * Incorrect CloseReason import. This is purely used in type hinting and has no functional impact.

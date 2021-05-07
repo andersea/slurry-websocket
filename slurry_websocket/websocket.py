@@ -4,7 +4,7 @@ import logging
 from slurry.sections.abc import Section
 import trio
 from trio_websocket import connect_websocket, connect_websocket_url, CloseReason
-from trio_websocket import ConnectionTimeout, DisconnectionTimeout, HandshakeError, ConnectionClosed
+from trio_websocket import ConnectionTimeout, HandshakeError, ConnectionClosed
 import orjson
 
 log = logging.getLogger(__name__)

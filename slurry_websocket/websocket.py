@@ -4,7 +4,7 @@ import logging
 from slurry.sections.abc import Section
 import trio
 from trio_websocket import connect_websocket, connect_websocket_url, CloseReason
-from trio_websocket import ConnectionTimeout, DisconnectionTimeout, HandshakeError, ConnectionClosed
+from trio_websocket import ConnectionTimeout, HandshakeError
 import orjson
 
 log = logging.getLogger(__name__)
@@ -164,8 +164,6 @@ class Websocket(Section):
                         await output(orjson.loads(message))
                     else:
                         await output(message)
-            except ConnectionClosed as cc:
-                log.info('Slurry websocket connection closed, %s', cc.reason)
             finally:
                 nursery.cancel_scope.cancel()
 

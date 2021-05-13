@@ -1,6 +1,6 @@
 # History
 
-## v0.3.0
+## v0.3.1
 
 Previous versions of slurry-websocket would swallow connection closed exceptions, leaving the pipeline oblivious to remote closure
 of the websocket. After experimenting with the consequences of this behaviour, it looks as if it would be more helpful to propagate
@@ -9,6 +9,8 @@ these events. This has the following consequences:
 The pipeline will now raise ConnectionClosed, when the websocket section has it's underlying connection closed. This is propagated via the pump task that is running the section.
 
 Any open Pipeline taps will close. No errors will be raised from taps. There isn't really any way to notify taps of errors, with any specificity. Taps are MemoryReceiveChannels and are effectively insulated from any errors that happen on the send side, by design.
+
+* Fix: Revert pipeline closure handling.
 
 ## v0.2.10
 

@@ -4,7 +4,7 @@ import logging
 from slurry.sections.abc import Section
 import trio
 from trio_websocket import connect_websocket, connect_websocket_url, CloseReason
-from trio_websocket import ConnectionTimeout, HandshakeError
+from trio_websocket import ConnectionTimeout, HandshakeError, DisconnectionTimeout
 import orjson
 
 log = logging.getLogger(__name__)
@@ -164,8 +164,19 @@ class Websocket(Section):
                         await output(orjson.loads(message))
                     else:
                         await output(message)
+            except trio.BrokenResourceError:
+                # If writing to the output results in an BrokenResourceError, it means that the
+                # pipeline has been closed from the outside. We should attempt to disconnect
+                # gracefully.
+                log.debug('Slurry websocket pipeline closed.')
+                try:
+                    with trio.fail_after(self.disconnect_timeout):
+                        await self._connection.aclose()
+                except trio.TooSlowError:
+                    raise DisconnectionTimeout from None
             finally:
                 nursery.cancel_scope.cancel()
+                log.debug('Slurry websocket closed.')
 
     @property
     def closed(self) -> CloseReason:

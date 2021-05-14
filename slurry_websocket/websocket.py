@@ -120,7 +120,7 @@ class Websocket(Section):
         return websocket
 
     async def pump(self, input, output):
-        log.info('Slurry websocket starting.')
+        log.debug('Slurry websocket starting.')
         async def send_task():
             send_message = self._connection.send_message
             async for message in input:
@@ -151,7 +151,7 @@ class Websocket(Section):
                 raise ConnectionTimeout from None
             except OSError as e:
                 raise HandshakeError from e
-            log.info('Slurry websocket connected.')
+            log.debug('Slurry websocket connected.')
             if input is not None:
                 if self.parse_json:
                     nursery.start_soon(send_json_task)

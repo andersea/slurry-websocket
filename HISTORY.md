@@ -1,5 +1,9 @@
 # History
 
+## v0.3.2
+
+* Use debug log level instead of info.
+
 ## v0.3.1
 
 Previous versions of slurry-websocket would swallow connection closed exceptions, leaving the pipeline oblivious to remote closure

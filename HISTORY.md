@@ -1,5 +1,9 @@
 # History
 
+## v0.3.3
+
+* Update trio+slurry
+
 ## v0.3.2
 
 * Use debug log level instead of info.

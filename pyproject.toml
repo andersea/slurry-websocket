@@ -22,7 +22,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-slurry = "^0.10.3"
+slurry = "^0.10.4"
 trio-websocket = "^0.9.2"
 orjson = "^3.5.2"
 

@@ -1,5 +1,9 @@
 # History
 
+## v0.4.0
+
+* Update all dependencies. Minimum required python version is 3.7.
+
 ## v0.3.3
 
 * Update trio+slurry

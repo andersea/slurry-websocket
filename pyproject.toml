@@ -14,17 +14,16 @@ classifiers = [
     "Natural Language :: English",
     "Framework :: Trio",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
-slurry = "^0.10.4"
+python = "^3.7"
+slurry = "^1.1.0"
 trio-websocket = "^0.9.2"
-orjson = "^3.5.2"
+orjson = "^3.6.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.1.2"

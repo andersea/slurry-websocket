@@ -1,6 +1,6 @@
 # History
 
-## v0.4.0
+## v0.4.1
 
 * Update all dependencies. Minimum required python version is 3.7.
 
